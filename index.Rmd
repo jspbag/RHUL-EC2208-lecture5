@@ -1,0 +1,267 @@
+---
+pagetitle: Hypothesis tests in the multiple regression model
+output: 
+  revealjs::revealjs_presentation:
+    incremental: false
+    theme: solarized
+    self_contained: false
+    reveal_plugins: ["notes","chalkboard"]
+    # reveal_plugins: ["menu"]
+    highlight: pygments
+    center: true
+    transition: none
+    background_transition: none 
+    reveal_options:
+      # chalkboard:
+      #   theme: whiteboard
+      #   toggleNotesButton: true
+      #   toggleChalkboardButton: true
+      menu:
+        numbers: true
+      slideNumber: true
+      previewLinks: false
+    fig_caption: true
+    pandoc_args:
+    - --indented-code-classes
+    - lineNumbers
+    css: mystyle.css
+    
+--- 
+
+<section>
+
+<h1>Hypothesis tests in the multiple regression model</h1>
+
+Based on Stock and Watson, ch. 7
+
+<br>
+
+<h2>[Jesper Bagger](mailto:jesper.bagger@rhul.ac.uk)</h2>
+
+<h3>EC2208 | Royal Holloway | 2021/22</h3>
+
+</section>
+
+```{r results='asis', echo=FALSE, include=FALSE}
+library(AER) # load Applied Econometrics with R library
+library(parameters) # Load parameters library for robust SE computation
+data(CASchools) # Load CASchools data
+# Generate a couple of useful variables
+CASchools$STR <- CASchools$students/CASchools$teachers  # Student-teacher ratio
+CASchools$Score <- (CASchools$read + CASchools$math)/2  # Student test score
+CASchools$expenditure <- CASchools$expenditure/1000  # Expenditure per pupil in 1000 dollars
+```
+
+
+# The multiple regression model
+
+## The multiple regression model
+
+$$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$
+
+- $Score$ and $STR$ are test scores and class size
+
+- $PctEL$ is pct of pupils that are English learners
+
+- $Expn$ is annual expenditures per pupil (in 1000 dollars)
+
+
+## The large sample distribution of the OLS estimator 
+
+- In large samples, $\hat{\beta}_0$, $\hat{\beta}_1$, $\hat{\beta}_2$, and $\hat{\beta}_3$ are **jointly normal distributed**, and each $\hat{\beta}_j$ is distributed 
+
+  $$\hat{\beta}_j \overset{\text{approx.}}{\sim} \mathcal{N}(\beta_j,\sigma_{\hat{\beta}_j}^2), \quad j = 0,1,2,3$$
+
+- Use **heteroskedasticity robust** estimator of $\sigma_{\hat{\beta}_j}^2$: $\hat{\sigma}_{\hat{\beta}_j}^2$
+
+- $SE(\hat{\beta}_j) = \sqrt{\hat{\sigma}_{\hat{\beta}_j}^2}$ is the **robust standard error** of $\hat{\beta}_j$
+
+## The multiple regression model in R
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+parameters(lm1, robust = TRUE, vcov_type = "HC1")
+```
+
+# Simple hypotheses tests
+
+## Test of a simple hypotheses
+
+$$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$
+
+
+- What is the effect on test scores of reducing class size, holding expenditures per pupil constant?
+
+- Simple hypotheses involve a **single restriction** on a **single coefficient**; for example,
+
+  $$H_0: \, \beta_1 = 0; \quad H_1:  \beta_1 \neq 0$$
+  
+- Use the $t$-test based on the $t$-statistic exactly as in the simple regression model
+
+  <!-- $$t = \frac{\hat{\beta}_1-0}{\hat{\sigma}_{\hat{\beta}_1}} \overset{\text{approx}}{\sim} \mathcal{N}\left(0,1 \right)$$ -->
+
+<!-- ## The $t$-test -->
+
+<!-- - Fix **significance level** $\alpha$ (e.g. $\alpha = 0.05$) and apply the rule: -->
+
+<!--   <div class="box"> -->
+<!--   Reject $H_0$ if $p$-value $<\alpha$; otherwise, do not reject $H_0$,  -->
+<!--   </div> -->
+
+<!--   or equivalently, -->
+
+<!--   <div class="box"> -->
+<!--   Reject $H_0$ if $|t| > z_{1-\alpha/2}$, where the **critical value** $z_{1-\alpha/2}$ is $(1-\alpha/2)\times 100$ percentile in $\mathcal{N}(0,1)$ -->
+<!--   </div> -->
+
+<!-- - Note, for $\alpha = 0.05$, the critical value is $z_{0.975} = 1.96$  -->
+
+<!-- ## $t$-tests in R -->
+
+<!-- ```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"} -->
+<!-- parameters(lm1, robust = TRUE, vcov_type = "HC1") -->
+<!-- ``` -->
+
+## $t$-tests in R
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+parameters(lm1, robust = TRUE, vcov_type = "HC1")
+```
+
+
+# Joint hypothesis tests
+
+<!-- ## The multiple regression model -->
+
+<!-- $$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$ -->
+
+<!-- - $Score$ and $STR$ are test scores and class size -->
+
+<!-- - $PctEL$ is pct of pupils that are English learners -->
+
+<!-- - $Expn$ is annual expenditures per pupil (in 1000 dollars) -->
+
+<!-- - What is the effect on test scores of reducing class size, but **holding expenditures per pupil constant**? -->
+
+<!-- ## The multiple regression model in R -->
+
+<!-- ```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"} -->
+<!-- lm2 <- lm(Score ~ STR + english + expenditure, data = CASchools) -->
+<!-- parameters(lm2, robust = TRUE, vcov_type = "HC1") -->
+<!-- ``` -->
+
+
+## Test of a joint hypotheses
+
+$$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$
+
+- Joint hypotheses involve **multiple restrictions** or **multiple coefficients**; for example,
+
+  $$H_0: \, \beta_1 = \beta_3 = 0; \quad H_1:  \beta_1 \neq 0 \text{ or } \beta_3 \neq 0$$
+
+- This joint hypothesis involves $q = 2$ restrictions
+  
+- Joint hypotheses cannot be tested using $t$-tests, use instead the $F$-test based on the $F$-statistic (large $n$):
+
+  $$F \overset{\text{approx}}{\sim} F_{q,\infty}$$
+
+## The $F$-test
+
+- Fix the significance level $\alpha$ (e.g. $\alpha = 0.05$) 
+
+- Compute the $F$-statistic and apply the rule:
+
+  <div class="box">
+  Reject $H_0$ if $F > F_{q,\infty}^{1-\alpha}$, where critical value $F_{q,\infty}^{1-\alpha}$ is $(1-\alpha)\times 100$ percentile in $F_{q,\infty}$-distribution
+  </div>
+
+  or equivalently,
+  
+  <div class="box">
+  Reject $H_0$ if $p$-value $<\alpha$; otherwise, do not reject $H_0$, 
+  </div>
+
+## Critical values for the $F_{q,\infty}$-distribution
+
+<img data-src="SW-F-critvals.jpg" height="470" width="500"/>
+
+
+## The $F$-test in R
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+linearHypothesis(lm1, c("STR=0", "expenditure=0"), white.adjust = "hc1")
+```
+
+## The $F$-test of a single restriction on a single coefficient
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+linearHypothesis(lm1, c("STR=0"), white.adjust = "hc1")
+```
+
+## Test of a (different kind of) joint hypothesis
+
+$$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$
+
+- Joint hypotheses involve **multiple restrictions** or **multiple coefficients**; for example,
+
+  $$H_0: \, \beta_1 = \beta_3; \quad H_1:  \beta_1 \neq \beta_3$$
+
+- This joint hypothesis involves $q = 1$ restrictions, but **two coefficients**
+  
+- These joint hypothesis can also be tested using an $F$-test
+
+## The $F$-test of a single restriction involving two coefficients
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+linearHypothesis(lm1, c("STR=expenditure"), white.adjust = "hc1")
+```
+
+# The regression $F$-statistic
+
+## The regression $F$-statistic
+
+$$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$
+
+- Regression output includes the **regression** $F$**-statistic**
+
+  $$H_0: \, \beta_1 = \beta_2 = \beta_3 = 0;$$
+  $$H_1:  \beta_1 \neq 0 \text{ or } \beta_2 \neq 0 \text{ or } \beta_3 \neq 0$$
+  
+- The regression $F$-statistic is the $F$-statistic for the null that **all** slope coefficients are simultaneously zero!
+
+## The regression $F$-statistics in R
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+summary(lm1)
+```
+
+## The regression $F$-statistics in R
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+linearHypothesis(lm1, c("STR=0", "english", "expenditure=0"))
+```
+
+## The robust regression $F$-statistics in R
+
+```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"}
+lm1 <- lm(Score ~ STR + english + expenditure, data = CASchools)
+linearHypothesis(lm1, c("STR=0", "english", "expenditure=0"), white.adjust = "hc1")
+```
+
+# Summary
+
+## Summary
+
+- A simple hypotheses is a single restriction on a single coefficient
+
+- Use the $t$-test to test simple hypotheses
+
+- A joint hypotheses involve multiple restrictions or multiple coefficients
+
+- Use the $F$-test to test joint hypotheses

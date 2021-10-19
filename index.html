@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <title>Hypothesis tests in the multiple regression model</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="index_files/reveal.js-3.3.0.1/css/theme/solarized.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;	}
+    .reveal h4 { font-size: 1em;	}
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+    <link rel="stylesheet" href="mystyle.css"/>
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+	/* SECTION 1: Set default width, margin, float, and
+	   background. This prevents elements from extending
+	   beyond the edge of the printed page, and prevents
+	   unnecessary background images from printing */
+	html {
+		background: #fff;
+		width: auto;
+		height: auto;
+		overflow: visible;
+	}
+	body {
+		background: #fff;
+		font-size: 20pt;
+		width: auto;
+		height: auto;
+		border: 0;
+		margin: 0 5%;
+		padding: 0;
+		overflow: visible;
+		float: none !important;
+	}
+
+	/* SECTION 2: Remove any elements not needed in print.
+	   This would include navigation, ads, sidebars, etc. */
+	.nestedarrow,
+	.controls,
+	.fork-reveal,
+	.share-reveal,
+	.state-background,
+	.reveal .progress,
+	.reveal .backgrounds {
+		display: none !important;
+	}
+
+	/* SECTION 3: Set body font face, size, and color.
+	   Consider using a serif font for readability. */
+	body, p, td, li, div {
+		font-size: 20pt!important;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		color: #000;
+	}
+
+	/* SECTION 4: Set heading font face, sizes, and color.
+	   Differentiate your headings from your body text.
+	   Perhaps use a large sans-serif for distinction. */
+	h1,h2,h3,h4,h5,h6 {
+		color: #000!important;
+		height: auto;
+		line-height: normal;
+		font-family: Georgia, "Times New Roman", Times, serif !important;
+		text-shadow: 0 0 0 #000 !important;
+		text-align: left;
+		letter-spacing: normal;
+	}
+	/* Need to reduce the size of the fonts for printing */
+	h1 { font-size: 28pt !important;  }
+	h2 { font-size: 24pt !important; }
+	h3 { font-size: 22pt !important; }
+	h4 { font-size: 22pt !important; font-variant: small-caps; }
+	h5 { font-size: 21pt !important; }
+	h6 { font-size: 20pt !important; font-style: italic; }
+
+	/* SECTION 5: Make hyperlinks more usable.
+	   Ensure links are underlined, and consider appending
+	   the URL to the end of the link for usability. */
+	a:link,
+	a:visited {
+		color: #000 !important;
+		font-weight: bold;
+		text-decoration: underline;
+	}
+	/*
+	.reveal a:link:after,
+	.reveal a:visited:after {
+		content: " (" attr(href) ") ";
+		color: #222 !important;
+		font-size: 90%;
+	}
+	*/
+
+
+	/* SECTION 6: more reveal.js specific additions by @skypanther */
+	ul, ol, div, p {
+		visibility: visible;
+		position: static;
+		width: auto;
+		height: auto;
+		display: block;
+		overflow: visible;
+		margin: 0;
+		text-align: left !important;
+	}
+	.reveal pre,
+	.reveal table {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	.reveal pre code {
+		padding: 20px;
+		border: 1px solid #ddd;
+	}
+	.reveal blockquote {
+		margin: 20px 0;
+	}
+	.reveal .slides {
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 0 !important;
+		zoom: 1 !important;
+
+		overflow: visible !important;
+		display: block !important;
+
+		text-align: left !important;
+		-webkit-perspective: none;
+		   -moz-perspective: none;
+		    -ms-perspective: none;
+		        perspective: none;
+
+		-webkit-perspective-origin: 50% 50%;
+		   -moz-perspective-origin: 50% 50%;
+		    -ms-perspective-origin: 50% 50%;
+		        perspective-origin: 50% 50%;
+	}
+	.reveal .slides section {
+		visibility: visible !important;
+		position: static !important;
+		width: auto !important;
+		height: auto !important;
+		display: block !important;
+		overflow: visible !important;
+
+		left: 0 !important;
+		top: 0 !important;
+		margin-left: 0 !important;
+		margin-top: 0 !important;
+		padding: 60px 20px !important;
+		z-index: auto !important;
+
+		opacity: 1 !important;
+
+		page-break-after: always !important;
+
+		-webkit-transform-style: flat !important;
+		   -moz-transform-style: flat !important;
+		    -ms-transform-style: flat !important;
+		        transform-style: flat !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+
+		-webkit-transition: none !important;
+		   -moz-transition: none !important;
+		    -ms-transition: none !important;
+		        transition: none !important;
+	}
+	.reveal .slides section.stack {
+		padding: 0 !important;
+	}
+	.reveal section:last-of-type {
+		page-break-after: avoid !important;
+	}
+	.reveal section .fragment {
+		opacity: 1 !important;
+		visibility: visible !important;
+
+		-webkit-transform: none !important;
+		   -moz-transform: none !important;
+		    -ms-transform: none !important;
+		        transform: none !important;
+	}
+	.reveal section img {
+		display: block;
+		margin: 15px 0px;
+		background: rgba(255,255,255,1);
+		border: 1px solid #666;
+		box-shadow: none;
+	}
+
+	.reveal section small {
+		font-size: 0.8em;
+	}
+
+}  
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+    
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+	-webkit-print-color-adjust: exact;
+}
+
+body {
+	margin: 0 auto !important;
+	border: 0;
+	padding: 0;
+	float: none !important;
+	overflow: visible;
+}
+
+html {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+	display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+	overflow: hidden !important;
+	font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+	visibility: visible;
+	position: static;
+	width: auto;
+	height: auto;
+	display: block;
+	overflow: visible;
+	margin: auto;
+}
+.reveal {
+	width: auto !important;
+	height: auto !important;
+	overflow: hidden !important;
+}
+.reveal .slides {
+	position: static;
+	width: 100%;
+	height: auto;
+
+	left: auto;
+	top: auto;
+	margin: 0 !important;
+	padding: 0 !important;
+
+	overflow: visible;
+	display: block;
+
+	-webkit-perspective: none;
+	   -moz-perspective: none;
+	    -ms-perspective: none;
+	        perspective: none;
+
+	-webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+	   -moz-perspective-origin: 50% 50%;
+	    -ms-perspective-origin: 50% 50%;
+	        perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+	page-break-after: always !important;
+
+	visibility: visible !important;
+	position: relative !important;
+	display: block !important;
+	position: relative !important;
+
+	margin: 0 !important;
+	padding: 0 !important;
+	box-sizing: border-box !important;
+	min-height: 1px;
+
+	opacity: 1 !important;
+
+	-webkit-transform-style: flat !important;
+	   -moz-transform-style: flat !important;
+	    -ms-transform-style: flat !important;
+	        transform-style: flat !important;
+
+	-webkit-transform: none !important;
+	   -moz-transform: none !important;
+	    -ms-transform: none !important;
+	        transform: none !important;
+}
+
+.reveal section.stack {
+	margin: 0 !important;
+	padding: 0 !important;
+	page-break-after: avoid !important;
+	height: auto !important;
+	min-height: auto !important;
+}
+
+.reveal img {
+	box-shadow: none;
+}
+
+.reveal .roll {
+	overflow: visible;
+	line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+	position: relative;
+	z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+	display: block;
+	width: 100%;
+	max-height: none;
+	left: auto;
+	top: auto;
+	z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+	display: block;
+	position: absolute;
+	font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <script src="index_files/header-attrs-2.9/header-attrs.js"></script>
+    <link href="index_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+    <link href="index_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+
+<section class="slide level2">
+
+<section>
+<h1>
+Hypothesis tests in the multiple regression model
+</h1>
+<p>Based on Stock and Watson, ch. 7</p>
+<p><br></p>
+<h2>
+<a href="mailto:jesper.bagger@rhul.ac.uk">Jesper Bagger</a>
+</h2>
+<h3>
+EC2208 | Royal Holloway | 2021/22
+</h3>
+</section>
+</section>
+<section>
+<section id="the-multiple-regression-model" class="title-slide slide level1">
+<h1>The multiple regression model</h1>
+
+</section>
+<section id="the-multiple-regression-model-1" class="slide level2">
+<h2>The multiple regression model</h2>
+<p><span class="math display">\[Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i\]</span></p>
+<ul>
+<li><p><span class="math inline">\(Score\)</span> and <span class="math inline">\(STR\)</span> are test scores and class size</p></li>
+<li><p><span class="math inline">\(PctEL\)</span> is pct of pupils that are English learners</p></li>
+<li><p><span class="math inline">\(Expn\)</span> is annual expenditures per pupil (in 1000 dollars)</p></li>
+</ul>
+</section>
+<section id="the-large-sample-distribution-of-the-ols-estimator" class="slide level2">
+<h2>The large sample distribution of the OLS estimator</h2>
+<ul>
+<li><p>In large samples, <span class="math inline">\(\hat{\beta}_0\)</span>, <span class="math inline">\(\hat{\beta}_1\)</span>, <span class="math inline">\(\hat{\beta}_2\)</span>, and <span class="math inline">\(\hat{\beta}_3\)</span> are <strong>jointly normal distributed</strong>, and each <span class="math inline">\(\hat{\beta}_j\)</span> is distributed</p>
+<p><span class="math display">\[\hat{\beta}_j \overset{\text{approx.}}{\sim} \mathcal{N}(\beta_j,\sigma_{\hat{\beta}_j}^2), \quad j = 0,1,2,3\]</span></p></li>
+<li><p>Use <strong>heteroskedasticity robust</strong> estimator of <span class="math inline">\(\sigma_{\hat{\beta}_j}^2\)</span>: <span class="math inline">\(\hat{\sigma}_{\hat{\beta}_j}^2\)</span></p></li>
+<li><p><span class="math inline">\(SE(\hat{\beta}_j) = \sqrt{\hat{\sigma}_{\hat{\beta}_j}^2}\)</span> is the <strong>robust standard error</strong> of <span class="math inline">\(\hat{\beta}_j\)</span></p></li>
+</ul>
+</section>
+<section id="the-multiple-regression-model-in-r" class="slide level2">
+<h2>The multiple regression model in R</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">parameters</span>(lm1, <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">vcov_type =</span> <span class="st">&quot;HC1&quot;</span>)</span></code></pre></div>
+<pre><code>## Parameter   | Coefficient |    SE |           95% CI | t(416) |      p
+## ----------------------------------------------------------------------
+## (Intercept) |      649.58 | 15.46 | [619.19, 679.96] |  42.02 | &lt; .001
+## STR         |       -0.29 |  0.48 | [ -1.23,   0.66] |  -0.59 | 0.553 
+## english     |       -0.66 |  0.03 | [ -0.72,  -0.59] | -20.64 | &lt; .001
+## expenditure |        3.87 |  1.58 | [  0.76,   6.98] |   2.45 | 0.015</code></pre>
+</section></section>
+<section>
+<section id="simple-hypotheses-tests" class="title-slide slide level1">
+<h1>Simple hypotheses tests</h1>
+
+</section>
+<section id="test-of-a-simple-hypotheses" class="slide level2">
+<h2>Test of a simple hypotheses</h2>
+<p><span class="math display">\[Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i\]</span></p>
+<ul>
+<li><p>What is the effect on test scores of reducing class size, holding expenditures per pupil constant?</p></li>
+<li><p>Simple hypotheses involve a <strong>single restriction</strong> on a <strong>single coefficient</strong>; for example,</p>
+<p><span class="math display">\[H_0: \, \beta_1 = 0; \quad H_1:  \beta_1 \neq 0\]</span></p></li>
+<li><p>Use the <span class="math inline">\(t\)</span>-test based on the <span class="math inline">\(t\)</span>-statistic exactly as in the simple regression model</p>
+<!-- $$t = \frac{\hat{\beta}_1-0}{\hat{\sigma}_{\hat{\beta}_1}} \overset{\text{approx}}{\sim} \mathcal{N}\left(0,1 \right)$$ --></li>
+</ul>
+<!-- ## The $t$-test -->
+<!-- - Fix **significance level** $\alpha$ (e.g. $\alpha = 0.05$) and apply the rule: -->
+<!--   <div class="box"> -->
+<!--   Reject $H_0$ if $p$-value $<\alpha$; otherwise, do not reject $H_0$,  -->
+<!--   </div> -->
+<!--   or equivalently, -->
+<!--   <div class="box"> -->
+<!--   Reject $H_0$ if $|t| > z_{1-\alpha/2}$, where the **critical value** $z_{1-\alpha/2}$ is $(1-\alpha/2)\times 100$ percentile in $\mathcal{N}(0,1)$ -->
+<!--   </div> -->
+<!-- - Note, for $\alpha = 0.05$, the critical value is $z_{0.975} = 1.96$  -->
+<!-- ## $t$-tests in R -->
+<!-- ```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"} -->
+<!-- parameters(lm1, robust = TRUE, vcov_type = "HC1") -->
+<!-- ``` -->
+</section>
+<section id="t-tests-in-r" class="slide level2">
+<h2><span class="math inline">\(t\)</span>-tests in R</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">parameters</span>(lm1, <span class="at">robust =</span> <span class="cn">TRUE</span>, <span class="at">vcov_type =</span> <span class="st">&quot;HC1&quot;</span>)</span></code></pre></div>
+<pre><code>## Parameter   | Coefficient |    SE |           95% CI | t(416) |      p
+## ----------------------------------------------------------------------
+## (Intercept) |      649.58 | 15.46 | [619.19, 679.96] |  42.02 | &lt; .001
+## STR         |       -0.29 |  0.48 | [ -1.23,   0.66] |  -0.59 | 0.553 
+## english     |       -0.66 |  0.03 | [ -0.72,  -0.59] | -20.64 | &lt; .001
+## expenditure |        3.87 |  1.58 | [  0.76,   6.98] |   2.45 | 0.015</code></pre>
+</section></section>
+<section>
+<section id="joint-hypothesis-tests" class="title-slide slide level1">
+<h1>Joint hypothesis tests</h1>
+<!-- ## The multiple regression model -->
+<!-- $$Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i$$ -->
+<!-- - $Score$ and $STR$ are test scores and class size -->
+<!-- - $PctEL$ is pct of pupils that are English learners -->
+<!-- - $Expn$ is annual expenditures per pupil (in 1000 dollars) -->
+<!-- - What is the effect on test scores of reducing class size, but **holding expenditures per pupil constant**? -->
+<!-- ## The multiple regression model in R -->
+<!-- ```{r echo=TRUE, error=FALSE, warning=FALSE, out.width = "70%"} -->
+<!-- lm2 <- lm(Score ~ STR + english + expenditure, data = CASchools) -->
+<!-- parameters(lm2, robust = TRUE, vcov_type = "HC1") -->
+<!-- ``` -->
+</section>
+<section id="test-of-a-joint-hypotheses" class="slide level2">
+<h2>Test of a joint hypotheses</h2>
+<p><span class="math display">\[Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i\]</span></p>
+<ul>
+<li><p>Joint hypotheses involve <strong>multiple restrictions</strong> or <strong>multiple coefficients</strong>; for example,</p>
+<p><span class="math display">\[H_0: \, \beta_1 = \beta_3 = 0; \quad H_1:  \beta_1 \neq 0 \text{ or } \beta_3 \neq 0\]</span></p></li>
+<li><p>This joint hypothesis involves <span class="math inline">\(q = 2\)</span> restrictions</p></li>
+<li><p>Joint hypotheses cannot be tested using <span class="math inline">\(t\)</span>-tests, use instead the <span class="math inline">\(F\)</span>-test based on the <span class="math inline">\(F\)</span>-statistic (large <span class="math inline">\(n\)</span>):</p>
+<p><span class="math display">\[F \overset{\text{approx}}{\sim} F_{q,\infty}\]</span></p></li>
+</ul>
+</section>
+<section id="the-f-test" class="slide level2">
+<h2>The <span class="math inline">\(F\)</span>-test</h2>
+<ul>
+<li><p>Fix the significance level <span class="math inline">\(\alpha\)</span> (e.g. <span class="math inline">\(\alpha = 0.05\)</span>)</p></li>
+<li><p>Compute the <span class="math inline">\(F\)</span>-statistic and apply the rule:</p>
+<div class="box">
+<p>Reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(F &gt; F_{q,\infty}^{1-\alpha}\)</span>, where critical value <span class="math inline">\(F_{q,\infty}^{1-\alpha}\)</span> is <span class="math inline">\((1-\alpha)\times 100\)</span> percentile in <span class="math inline">\(F_{q,\infty}\)</span>-distribution</p>
+</div>
+<p>or equivalently,</p>
+<div class="box">
+<p>Reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(p\)</span>-value <span class="math inline">\(&lt;\alpha\)</span>; otherwise, do not reject <span class="math inline">\(H_0\)</span>,</p>
+</div></li>
+</ul>
+</section>
+<section id="critical-values-for-the-f_qinfty-distribution" class="slide level2">
+<h2>Critical values for the <span class="math inline">\(F_{q,\infty}\)</span>-distribution</h2>
+<p><img data-src="SW-F-critvals.jpg" height="470" width="500"/></p>
+</section>
+<section id="the-f-test-in-r" class="slide level2">
+<h2>The <span class="math inline">\(F\)</span>-test in R</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">linearHypothesis</span>(lm1, <span class="fu">c</span>(<span class="st">&quot;STR=0&quot;</span>, <span class="st">&quot;expenditure=0&quot;</span>), <span class="at">white.adjust =</span> <span class="st">&quot;hc1&quot;</span>)</span></code></pre></div>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## STR = 0
+## expenditure = 0
+## 
+## Model 1: restricted model
+## Model 2: Score ~ STR + english + expenditure
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df      F   Pr(&gt;F)   
+## 1    418                      
+## 2    416  2 5.4337 0.004682 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="the-f-test-of-a-single-restriction-on-a-single-coefficient" class="slide level2">
+<h2>The <span class="math inline">\(F\)</span>-test of a single restriction on a single coefficient</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">linearHypothesis</span>(lm1, <span class="fu">c</span>(<span class="st">&quot;STR=0&quot;</span>), <span class="at">white.adjust =</span> <span class="st">&quot;hc1&quot;</span>)</span></code></pre></div>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## STR = 0
+## 
+## Model 1: restricted model
+## Model 2: Score ~ STR + english + expenditure
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df     F Pr(&gt;F)
+## 1    417                
+## 2    416  1 0.353 0.5528</code></pre>
+</section>
+<section id="test-of-a-different-kind-of-joint-hypothesis" class="slide level2">
+<h2>Test of a (different kind of) joint hypothesis</h2>
+<p><span class="math display">\[Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i\]</span></p>
+<ul>
+<li><p>Joint hypotheses involve <strong>multiple restrictions</strong> or <strong>multiple coefficients</strong>; for example,</p>
+<p><span class="math display">\[H_0: \, \beta_1 = \beta_3; \quad H_1:  \beta_1 \neq \beta_3\]</span></p></li>
+<li><p>This joint hypothesis involves <span class="math inline">\(q = 1\)</span> restrictions, but <strong>two coefficients</strong></p></li>
+<li><p>These joint hypothesis can also be tested using an <span class="math inline">\(F\)</span>-test</p></li>
+</ul>
+</section>
+<section id="the-f-test-of-a-single-restriction-involving-two-coefficients" class="slide level2">
+<h2>The <span class="math inline">\(F\)</span>-test of a single restriction involving two coefficients</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">linearHypothesis</span>(lm1, <span class="fu">c</span>(<span class="st">&quot;STR=expenditure&quot;</span>), <span class="at">white.adjust =</span> <span class="st">&quot;hc1&quot;</span>)</span></code></pre></div>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## STR - expenditure = 0
+## 
+## Model 1: restricted model
+## Model 2: Score ~ STR + english + expenditure
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df      F   Pr(&gt;F)   
+## 1    417                      
+## 2    416  1 8.9403 0.002955 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section></section>
+<section>
+<section id="the-regression-f-statistic" class="title-slide slide level1">
+<h1>The regression <span class="math inline">\(F\)</span>-statistic</h1>
+
+</section>
+<section id="the-regression-f-statistic-1" class="slide level2">
+<h2>The regression <span class="math inline">\(F\)</span>-statistic</h2>
+<p><span class="math display">\[Score_i = \beta_0 + \beta_1 STR_i + \beta_2 PctEL_i  + \beta_3 Expn_i + u_i\]</span></p>
+<ul>
+<li><p>Regression output includes the <strong>regression</strong> <span class="math inline">\(F\)</span><strong>-statistic</strong></p>
+<p><span class="math display">\[H_0: \, \beta_1 = \beta_2 = \beta_3 = 0;\]</span> <span class="math display">\[H_1:  \beta_1 \neq 0 \text{ or } \beta_2 \neq 0 \text{ or } \beta_3 \neq 0\]</span></p></li>
+<li><p>The regression <span class="math inline">\(F\)</span>-statistic is the <span class="math inline">\(F\)</span>-statistic for the null that <strong>all</strong> slope coefficients are simultaneously zero!</p></li>
+</ul>
+</section>
+<section id="the-regression-f-statistics-in-r" class="slide level2">
+<h2>The regression <span class="math inline">\(F\)</span>-statistics in R</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm1)</span></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = Score ~ STR + english + expenditure, data = CASchools)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -51.340 -10.111   0.293  10.318  43.181 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 649.57795   15.20572  42.719  &lt; 2e-16 ***
+## STR          -0.28640    0.48052  -0.596  0.55149    
+## english      -0.65602    0.03911 -16.776  &lt; 2e-16 ***
+## expenditure   3.86790    1.41212   2.739  0.00643 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 14.35 on 416 degrees of freedom
+## Multiple R-squared:  0.4366, Adjusted R-squared:  0.4325 
+## F-statistic: 107.5 on 3 and 416 DF,  p-value: &lt; 2.2e-16</code></pre>
+</section>
+<section id="the-regression-f-statistics-in-r-1" class="slide level2">
+<h2>The regression <span class="math inline">\(F\)</span>-statistics in R</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">linearHypothesis</span>(lm1, <span class="fu">c</span>(<span class="st">&quot;STR=0&quot;</span>, <span class="st">&quot;english&quot;</span>, <span class="st">&quot;expenditure=0&quot;</span>))</span></code></pre></div>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## STR = 0
+## english = 0
+## expenditure = 0
+## 
+## Model 1: restricted model
+## Model 2: Score ~ STR + english + expenditure
+## 
+##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1    419 152110                                  
+## 2    416  85700  3     66410 107.45 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section>
+<section id="the-robust-regression-f-statistics-in-r" class="slide level2">
+<h2>The robust regression <span class="math inline">\(F\)</span>-statistics in R</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>lm1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(Score <span class="sc">~</span> STR <span class="sc">+</span> english <span class="sc">+</span> expenditure, <span class="at">data =</span> CASchools)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">linearHypothesis</span>(lm1, <span class="fu">c</span>(<span class="st">&quot;STR=0&quot;</span>, <span class="st">&quot;english&quot;</span>, <span class="st">&quot;expenditure=0&quot;</span>), <span class="at">white.adjust =</span> <span class="st">&quot;hc1&quot;</span>)</span></code></pre></div>
+<pre><code>## Linear hypothesis test
+## 
+## Hypothesis:
+## STR = 0
+## english = 0
+## expenditure = 0
+## 
+## Model 1: restricted model
+## Model 2: Score ~ STR + english + expenditure
+## 
+## Note: Coefficient covariance matrix supplied.
+## 
+##   Res.Df Df     F    Pr(&gt;F)    
+## 1    419                       
+## 2    416  3 147.2 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</section></section>
+<section>
+<section id="summary" class="title-slide slide level1">
+<h1>Summary</h1>
+
+</section>
+<section id="summary-1" class="slide level2">
+<h2>Summary</h2>
+<ul>
+<li><p>A simple hypotheses is a single restriction on a single coefficient</p></li>
+<li><p>Use the <span class="math inline">\(t\)</span>-test to test simple hypotheses</p></li>
+<li><p>A joint hypotheses involve multiple restrictions or multiple coefficients</p></li>
+<li><p>Use the <span class="math inline">\(F\)</span>-test to test joint hypotheses</p></li>
+</ul>
+</section></section>
+    </div>
+  </div>
+
+  <script src="index_files/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="index_files/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Vertical centering of slides
+        center: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'none', // none/fade/slide/convex/concave/zoom
+
+
+
+        chalkboard: {
+        },
+
+        keyboard: {
+          67: function() { RevealChalkboard.toggleNotesCanvas() },    // toggle notes canvas when 'c' is pressed
+          66: function() { RevealChalkboard.toggleChalkboard() }, // toggle chalkboard when 'b' is pressed
+          46: function() { RevealChalkboard.clear() },    // clear chalkboard when 'DEL' is pressed
+           8: function() { RevealChalkboard.reset() },    // reset chalkboard data on current slide when 'BACKSPACE' is pressed
+          68: function() { RevealChalkboard.download() }, // downlad recorded chalkboard drawing when 'd' is pressed
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'index_files/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+          { src: 'index_files/reveal.js-3.3.0.1/plugin/chalkboard/chalkboard.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {  
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
